@@ -1,166 +1,116 @@
----
-title: CLI for globalizing with inlang
-shortTitle: CLI
-href: /documentation/apps/inlang-cli
-description: The inlang Command Line Interface (CLI) automates globalization processes.
----
+<div>
+    <p align="center">
+        <img width="300" src="https://cdn.jsdelivr.net/gh/inlang/inlang/assets/logo-white-background.png"/>
+    </p>
+    <h4 align="center">
+        <a href="https://inlang.com/documentation" target="_blank">Get Started</a> ·
+        <a href="https://github.com/inlang/inlang/discussions" target="_blank">Discussions</a> · <a href="https://twitter.com/inlangHQ" target="_blank">Twitter</a>
+    </h4>
+</div>
 
-# Inlang CLI
+# Inlang IDE Code Extension
 
-[@inlang/cli](https://github.com/inlang/inlang/tree/main/source-code/cli) is a command line interface (CLI) tool that allows you to interact with the Inlang infrastructure. It can be used to automate localization tasks, such as machine translation, lining, and more.
+This extension provides a seamless integration of the [Inlang](https://inlang.com) localization solution into Visual Studio Code. It allows you to translate your content directly in your IDE.
 
-### Benefits
+If something isn't working as expected or you have a feature suggestion, please join our [Discord](https://discord.gg/DEHKgmx2) or [create an issue](<[https](https://github.com/inlang/inlang/issues/new/choose)>). We are happy to help!
 
-- ✨ **Automate** tedious localization tasks
-- ⚙️ Integrate localization into your **CI/CD** pipeline
-- 🔍 **Lint** your translations
-- 🤖 **Machine translate** your resources
-- 🖊️ Open the web editor right from the command line
-- ✅ Validate your `project.inlang.json` configuration file
+## Features
 
-## Installation
+### Context Tooltips
 
-You can install the @inlang/cli with this command:
+See translations and edit them directly in your code. No more back-and-forth looking into the translation files themselves.
 
-```sh
-npm install @inlang/cli
+<img width="500" src="https://cdn.jsdelivr.net/gh/inlang/inlang/assets/ide-extension/tooltip.gif"/>
+
+### ✂️ Extract Messages (translations)
+
+Extract Messages (translations) via the `Inlang: Extract Message` code action.
+
+<img width="500" src="https://cdn.jsdelivr.net/gh/inlang/inlang/assets/ide-extension/extract.gif"/>
+
+### Message Linting
+
+Get notified about missing translations and other issues directly in your IDE.
+
+<img width="500" src="https://cdn.jsdelivr.net/gh/inlang/inlang/assets/ide-extension/lint.gif"/>
+
+### 🔎 Inline Annotations
+
+See translations directly in your code. No more back-and-forth looking into the translation files themselves.
+
+<img width="500" src="https://cdn.jsdelivr.net/gh/inlang/inlang/assets/ide-extension/inline.gif"/>
+
+### 🔁 Update Translations
+
+Translations from the resource files are automatically updated when you change the source text.
+
+<img width="500" src="https://cdn.jsdelivr.net/gh/inlang/inlang/assets/ide-extension/update.gif"/>
+
+## 1️⃣ Setup
+
+Create a `inlang.config.js` in the **root** of your project. You can use the following template when using json files as translation files, if not, please look for other [supported resource file types](https://github.com/inlang/ecosystem#resources):
+
+```js
+export async function defineConfig(env) {
+	const { default: jsonPlugin } = await env.$import(
+		"https://cdn.jsdelivr.net/npm/@inlang/plugin-json@latest/dist/index.js",
+	)
+
+	return {
+		sourceLanguageTag: "en",
+		plugins: [
+			jsonPlugin({
+				pathPattern: "./path/to/languages/{language}.json",
+			}),
+		],
+	}
+}
 ```
 
-or
+#### Requirements:
 
-```sh
-yarn add @inlang/cli
+- Requires VS Code version 1.80.1 or higher.
+- Node.js version 16.17.1 or higher.
+
+## 2️⃣ Usage
+
+Just _highlight/select_ the text you want and hit `cmd .` or `ctrl +` (Quick Fix / Yellow Bulb) to open the **translate dialog** to provide a id for it.
+
+Hover over the message to see the tooltip with the translation.
+
+If something isn't working as expected, please join our [Discord](https://discord.gg/gdMPPWy57R) or [create an issue](https://github.com/inlang/inlang/issues/new/choose). We are happy to help!
+
+## 3️⃣ Configuration
+
+You can configure the extension to your needs by defining the `ideExtension` property in the config.
+
+| Property                   | Type    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `messageReferenceMatchers` | `Array` | An array of functions that define matchers for message references inside the code. Each function takes an argument of type `{ documentText: string }` and returns a promise that resolves to an array of message references (as defined by the `messageReferenceSchema`).                                                                                                                                                                                           |
+| `extractMessageOptions`    | `Array` | An array of objects that define options for extracting messages. Each object has a property `callback` that is a function which is called when the user finishes the message extraction command. The `callback` function takes two arguments of type `string`: `messageId` (the message identifier entered by the user) and `selection` (the text which was extracted), and returns a `string` that represents the code which should be inserted into the document. |
+| `documentSelectors`        | `Array` | An array of [VS Code DocumentSelectors](https://code.visualstudio.com/api/references/document-selector) that specify for which files/programming languages the extension should be activated. Each document selector is an object with optional properties `language`, `scheme`, `pattern`, and `notebookType`.                                                                                                                                                     |
+
+For this example, the extension parses strings with a `t` translation function & gives the according extract options `{t("messageID")}` & `t("messageID")`.
+You can fully customize this behavior with the example code below.
+
+If you are using a different translation function, you can use the following code as a template:
+
+```js
+export async function defineConfig(env) {
+	const { default: jsonPlugin } = await env.$import(
+		"https://cdn.jsdelivr.net/npm/@inlang/plugin-json@latest/dist/index.js",
+	)
+
+	return {
+		sourceLanguageTag: "en",
+		plugins: [
+			jsonPlugin({
+				pathPattern: "./path/to/languages/{language}.json",
+			}),
+		],
+		ideExtension: {
+			// ... your configuration here
+		},
+	}
+}
 ```
-
-best
-
-```sh
-npx @inlang/cli [command]
-```
-
-Minimum node version: `v18.0.0`
-
-If one of the commands can't be found, you are probably using an outdated version of the CLI. You can always get the **latest version** by running `npx @inlang/cli@latest [command]`.
-
-## Commands
-
-We recommend using the CLI with `npx` to avoid installing the CLI globally. Not installing the CLI globally has the following advantages:
-
-- the installed CLI version is scoped to the project, ensuring that it always works.
-- the CLI gets installed for team members, avoiding "why is this command not working for me" questions.
-
-`npx` is auto-installed with Node and NPM.
-
-If one of the commands can't be found, you are probably using an outdated version of the CLI. You can always get the **latest version** by running `npx @inlang/cli@latest [command]`.
-
-```sh
-CLI for inlang.
-
-Options:
-  -V, --version         output the version number
-  -h, --help            display help for command
-
-Commands:
-  config [command]   Commands for managing the config file.
-  lint               Commands for linting translations.
-  machine [command]  Commands for automating translations.
-  open [command]     Commands to open parts of the inlang ecosystem.
-  help [command]     display help for command
-```
-
-The following commands are available with the inlang CLI:
-
-### `config`
-
-The config command is used to interactively configure and create the project.inlang.json file.
-
-#### `config init`
-
-This command scans your file system hierarchy and finds out how your localization files are setup.
-It returns a complete config for you to use in your project, which you can modify to your needs.
-
-To use the `config init` command, simply run the following:
-
-```sh
-npx @inlang/cli config init
-```
-
-This will launch an interactive prompt that will guide you through the process of creating the inlang configuration file.
-
-#### `config validate`
-
-This command validates the `project.inlang.json` file in the current directory. It checks if the file is valid JSON and if it contains **all required fields**. It also checks if the specified resources exist and performs a _dry run of the translation process_.
-
-To validate the `project.inlang.json` file, run the following command:
-
-```sh
-npx @inlang/cli config validate
-```
-
-#### `config update`
-
-This command updates the `project.inlang.json` file with the latest versions of the plugins used. This is helpful if you want to **update your plugins** to the latest major version and don't want to look them up manually.
-
-Keep in mind updating to a new major version might break your configuration. _We recommend always checking the changelog of the plugin before updating._
-
-To update the `project.inlang.json` file, run the following command:
-
-```sh
-npx @inlang/cli config update
-```
-
-### `machine`
-
-The machine command is used to automate localization processes.
-
-#### `machine translate`
-
-The translate command machine translates all resources.
-
-To initiate machine translation, run the following command:
-
-```sh
-npx @inlang/cli machine translate
-```
-
-**Options**
-
-The translate command has the following options:
-
-- `-f, --force`: If this option is set, the command will not prompt confirmation. This is useful for CI/CD build pipelines. **We advise you to only use `machine translate` in build pipelines to avoid out-of-context/wrong translations.**
-
-This command reads the project.inlang.json file in the repository and retrieves the resources and reference language specified in the configuration. It then translates all messages from the reference language to other languages defined in the configuration.
-
-The translations are performed using machine translation services. The translated messages are added to the respective language resources. Finally, the updated resources are written back to the file system.
-
-> Note: The project.inlang.json file must be present in the repository for the translation to work.
-
-### `lint`
-
-The lint command lints the translation with the configured lint rules, for example, with the [@inlang/plugin-standard-lint-rules](https://github.com/inlang/inlang/tree/main/source-code/plugins/standard-lint-rules).
-
-```sh
-npx @inlang/cli lint
-```
-
-The `lint` command is provided with an optional `--no-fail` flag, which will not fail the command if there are any linting errors.
-
-`lint` will read through all resources and find potential errors and warnings in the translation strings, for example, with the [@inlang/plugin-standard-lint-rules](https://github.com/inlang/inlang/tree/main/source-code/plugins/standard-lint-rules), it searches for **missing messages**, **missing references** and **identical patterns/duplicates**.
-
-However, it's totally up to you how you configure your lints. _You can build your own plugin with your customized set of lints_ with the [@inlang/plugin-standard-lint-rules](https://github.com/inlang/inlang/tree/main/source-code/plugins/standard-lint-rules) as a starter template.
-
-### `open`
-
-The open command opens parts of the Inlang infrastructure in your default browser.
-
-#### `open editor`
-
-The editor command opens the Inlang editor for the current repository.
-
-To open the Inlang editor, run the following command:
-
-```sh
-npx @inlang/cli open editor
-```
-
-This command retrieves the remote URL of the repository and constructs the URL for the Inlang editor by appending the GitHub user and repository to https://inlang.com/editor/. The editor will be opened in your default browser.
