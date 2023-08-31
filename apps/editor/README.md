@@ -17,4 +17,6 @@ If you've used the editor before, you can choose from your latest repositories. 
 
 ### 3. Translate messages and push changes
 
-As soon as the repository is <!-- Continue here! -->
+As soon as the repository is loaded, you can start making changes and translating messages. Your changes are automatically saved and if you are done, you can directly commit your changes. Through this procedure, all other stakeholders working on the same codebase will always work with the same source of truth.
+
+
