@@ -1,11 +1,4 @@
----
-title: CLI for globalizing with inlang
-shortTitle: CLI
-href: /documentation/apps/inlang-cli
-description: The inlang Command Line Interface (CLI) automates globalization processes.
----
-
-# Inlang CLI
+# Automate localization tasks and benefit from intuitive commands
 
 [@inlang/cli](https://github.com/inlang/inlang/tree/main/source-code/cli) is a command line interface (CLI) tool that allows you to interact with the Inlang infrastructure. It can be used to automate localization tasks, such as machine translation, lining, and more.
 
